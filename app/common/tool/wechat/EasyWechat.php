@@ -21,13 +21,13 @@ class EasyWechat
      */
     public static function mp()
     {
-        $options = [
+        $options = [    
             'debug' => true,                                    //当值为 false 时，所有的日志都不会记录
             /**
              * 账号基本信息，请从微信公众平台/开放平台获取
              */
-            'app_id'  => 'wxa484dbfefb7df06d',                  // AppID
-            'secret'  => '9a367be9b0807e8122080ee738bd11b0',    // AppSecret
+            'app_id'  => 'wxdcc677f0fab756ed',                  // AppID
+            'secret'  => '28e0f7453abe4872ea0a191f57795224',    // AppSecret
             'token'   => 'carnest',                             // Token
             'aes_key' => '',                                    // EncodingAESKey，安全模式下请一定要填写！！！
 

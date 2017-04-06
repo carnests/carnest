@@ -203,7 +203,7 @@ return [
         // SESSION_ID的提交变量,解决flash上传跨域
         'var_session_id' => '',
         // SESSION 前缀
-        'prefix'         => 'think',
+        'prefix'         => 'carnest',
         // 驱动方式 支持redis memcache memcached
         'type'           => '',
         // 是否自动开启 SESSION
@@ -236,4 +236,7 @@ return [
         'var_page'  => 'page',
         'list_rows' => 15,
     ],
+
+    // 开启自动写入时间戳字段
+    'auto_timestamp' => 'datetime',
 ];
