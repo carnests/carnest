@@ -41,4 +41,9 @@ class User extends Model
         if($field)$field = ','.$field;
         return $this->where(['openid'=>$openid])->field('id,openid',$field)->find();
     }
+
+    public function update_lastlogin($id)
+    {
+        return $this->where(['id'=>$id])->update(['lastlogin'=>date('Y-m-d H:i:s')]);
+    }
 }

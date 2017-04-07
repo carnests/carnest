@@ -5,7 +5,11 @@ class Index extends Common
 {
     public function index()
     {
-        dump(session('user'));exit;
         return $this->fetch();
+    }
+
+    public function home()
+    {
+        return $this->fetch('index');
     }
 }

@@ -237,6 +237,4 @@ return [
         'list_rows' => 15,
     ],
 
-    // 开启自动写入时间戳字段
-    'auto_timestamp' => 'datetime',
 ];
