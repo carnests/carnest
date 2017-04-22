@@ -1,0 +1,69 @@
+{extend name="$public_base" /}
+
+{block name="title"}{$title}{/block}
+{block name="menu"}
+<a href="javascript:void(0);" id="aaa" >首页绑定页面1111111111</a>
+<a href="/info/" >资讯</a>
+<a href="/bbs/" >论坛</a>
+{/block}
+{block name="left"}{/block}
+{block name="main"}
+
+{/block}
+{block name="right"}
+最新资讯：
+
+{/block}
+{block name="script"}
+{__block__}
+<script>
+
+    $(document).on("click","#aaa",function(){
+        //alert(222);
+        geta();
+    });
+    wx.ready(function () {
+
+    });
+    function geta(){
+        wx.checkJsApi({
+            jsApiList: [
+                'getLocation'
+            ],
+            success: function (res) {
+                // alert(JSON.stringify(res));
+                // alert(JSON.stringify(res.checkResult.getLocation));
+                if (res.checkResult.getLocation == false) {
+                    alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
+                    return;
+                }
+            }
+        });
+        wx.getLocation({
+            type: 'wgs84',
+            success: function (res) {
+                var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+                var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+                var speed = res.speed; // 速度，以米/每秒计
+                var accuracy = res.accuracy; // 位置精度
+                alert([latitude,longitude]);
+                $.ajax({
+                    type:"POST",
+                    url:"{:url('bind/Index/get_location')}",
+                    data:{lat:latitude,lng:longitude},
+                    dataType:"json",
+                    success:function(data){
+                        alert(data);
+                    }
+                })
+            }
+        });
+    }
+
+
+
+</script>
+{/block}
+{block name="footer"}
+
+{/block}
