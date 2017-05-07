@@ -13,11 +13,11 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => 'qdm168150429.my3w.com',
+    'hostname'        => 'localhost',
     // 数据库名
-    'database'        => 'qdm168150429_db',
+    'database'        => 'carnest',
     // 用户名
-    'username'        => 'qdm168150429',
+    'username'        => 'carnest',
     // 密码
     'password'        => 'coolong851220',
     // 端口

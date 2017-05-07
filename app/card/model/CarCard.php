@@ -31,10 +31,13 @@ class CarCard extends Common
             $this->error = '该卡已经被绑定';
             return false;
         }
+        $info['card'] = strtoupper($info['card']);
+        $info['license_plate'] = '冀'.$info['card'];
         if($this->license_plate($info['license_plate'])){
             $this->error = '该车牌已经绑定';
             return false;
         }
+
         $Validate = Loader::validate('card/CarCard');
         if(!$Validate->check($info)){
             $this->error = $Validate->getError();
@@ -46,6 +49,9 @@ class CarCard extends Common
             $this->error = $this->db_bing_phone->getError();
             return false;
         }
+        $info['status'] = 1;
+
+        unset($info['phone']);
         $result = $this->where(['id'=>$info['id']])->update($info);
         return $result;
     }
@@ -73,7 +79,7 @@ class CarCard extends Common
 
     public function is_bing($id)
     {
-        return $this->where(['id'=>$id,'status'=>0])->value('uid,phone');
+        return $this->where(['id'=>$id,'status'=>1])->value('uid');
     }
 
     /**

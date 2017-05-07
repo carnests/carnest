@@ -42,12 +42,12 @@ class Map
             $coord = implode(';',$coord);
         }
         $url = self::BASE_URL.self::GEOCONV.'?coords='.$coord.'&from='.$from;
-        //dump($url);exit;
+
         $result = http_get($url.$this->key);
         if ($result)
         {
             $json = json_decode($result,true);
-            if (!$json || isset($json['status'])) {
+            if (!$json || (isset($json['status']) && $json['status']>0)) {
                 $this->errorMsg($json);
                 return false;
             }
@@ -71,7 +71,7 @@ class Map
         if ($result)
         {
             $json = json_decode($result,true);
-            if (!$json || $json['status']!=0) {
+            if (!$json || (isset($json['status']) && $json['status']>0)) {
                 $this->errorMsg($json);
                 return false;
             }
@@ -87,6 +87,6 @@ class Map
     public function errorMsg($json)
     {
         $this->error['errCode'] = $json['status'];
-        $this->error['errMsg'] = $json['message'];
+        $this->error['errMsg'] = isset($json['message'])?:'';
     }
 }

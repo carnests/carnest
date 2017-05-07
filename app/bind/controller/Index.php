@@ -45,14 +45,18 @@ class Index extends Common
     public function bind()
     {
         $info = input('info/a');
-        if(!$info['id']){       //二维码id
+        $id = input('id');
+        if(!$id){       //二维码id
             $info['id'] = $this->make_card($this->user['id']);
+        }else{
+            $info['id'] = $id;
         }
         $result = $this->db->bind($info);
         if($result){
             return ['errCode'=>0,'errMsg'=>'绑定成功'];
         }else{
             $error = $this->db->getError();
+            dump($error);exit;
             //dump(['errCode'=>1,'errMsg'=>$error?:'操作异常']);exit;
             return ['errCode'=>1,'errMsg'=>$error?:'操作异常'];
         }
@@ -67,9 +71,8 @@ class Index extends Common
         $lng = input('lng');
         $map = new BaiduMap();
         $result = $map->province($lat.",".$lng,3);
-
         if($result){
-            return $result;
+            return ['data'=>$result];
         }else{
             return $map->getError();
         }

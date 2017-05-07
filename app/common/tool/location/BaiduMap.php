@@ -31,7 +31,7 @@ class BaiduMap extends Map
         if($baidu_coord){
             $result =$this->geocoder($baidu_coord[0]);
             if($result){
-                return $result['result']['addressComponent']['province'];
+                return $result['addressComponent']['province'];
             }
             return $result;
         }

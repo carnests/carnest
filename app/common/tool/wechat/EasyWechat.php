@@ -32,12 +32,33 @@ class EasyWechat
             'aes_key' => '',                                    // EncodingAESKey，安全模式下请一定要填写！！！
 
             /**
+             * OAuth 配置
+             *
+             * scopes：公众平台（snsapi_userinfo / snsapi_base），开放平台：snsapi_login
+             * callback：OAuth授权完成后的回调页地址
+             */
+            'oauth' => [
+                'scopes'   => ['snsapi_userinfo'],
+                'callback' => url('auth/mp/callback'),
+            ],
+
+            /**
              * 日志配置
              */
             'log' => [
                 'level'      => 'debug',
                 'permission' => 0777,
                 'file'       => LOG_PATH.'wechat/'.date('Ym').'/'.date('d').'.log',
+            ],
+
+            /**
+             * Guzzle 全局设置
+             *
+             * 更多请参考： http://docs.guzzlephp.org/en/latest/request-options.html
+             */
+            'guzzle' => [
+                'timeout' => 3.0, // 超时时间（秒）
+                //'verify' => false, // 关掉 SSL 认证（强烈不建议！！！）
             ],
         ];
         return new Application($options);

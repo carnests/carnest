@@ -2,68 +2,203 @@
 
 {block name="title"}{$title}{/block}
 {block name="menu"}
-<a href="javascript:void(0);" id="aaa" >首页绑定页面1111111111</a>
-<a href="/info/" >资讯</a>
-<a href="/bbs/" >论坛</a>
+
 {/block}
 {block name="left"}{/block}
 {block name="main"}
+<div class="row">
+    <div class="col-xs-12">
+        <form role="form" class="form-inline" id="form" action="{:url('bind/index/bind')}" method="post" enctype="multipart/form-data">
+        <div class="form-group" style="float:left;">
+            <label class="col-xs-3 control-label">车牌号码</label>
+            <div class="col-xs-9">
+                <div class="col-xs-5">
+                    <select class="form-control" id="provinceAbb" name="info[province_id]">
+                        <option value ="110">京</option>
+                        <option value ="120">津</option>
+                        <option value ="130">冀</option>
+                        <option value ="140">晋</option>
+                        <option value ="150">蒙</option>
+                        <option value ="210">辽</option>
+                        <option value ="220">吉</option>
+                        <option value ="230">黑</option>
+                        <option value ="310">沪</option>
+                        <option value ="320">苏</option>
+                        <option value ="330">浙</option>
+                        <option value ="340">皖</option>
+                        <option value ="350">闽</option>
+                        <option value ="360">赣</option>
+                        <option value ="370">鲁</option>
+                        <option value ="410">豫</option>
+                        <option value ="420">鄂</option>
+                        <option value ="430">湘</option>
+                        <option value ="440">粤</option>
+                        <option value ="450">桂</option>
+                        <option value ="460">琼</option>
+                        <option value ="500">渝</option>
+                        <option value ="510">川</option>
+                        <option value ="520">贵</option>
+                        <option value ="530">云</option>
+                        <option value ="540">藏</option>
+                        <option value ="610">陕</option>
+                        <option value ="620">甘</option>
+                        <option value ="630">青</option>
+                        <option value ="640">宁</option>
+                        <option value ="650">新</option>
+                        <option value ="710">台</option>
+                        <option value ="810">港</option>
+                        <option value ="820">澳</option>
+                    </select>
+                </div>
+                <div class="col-xs-7">
+                    <input class="form-control" type="text" name="info[card]" style="text-transform:uppercase;">
+                </div>
+            </div>
+        </div>
+            <hr>
+        <div class="hr-line-dashed"></div>
+        <div class="form-group">
+            <label class="col-xs-3 control-label">手机号码</label>
+            <div class="col-xs-9">
+                <input class="form-control" type="text" name="info[phone]">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="hidden" name="id" value="{$id}">
+            <div class="col-xs-offset-3 col-xs-9">
+                <button type="submit" class="btn btn-default">提交</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
 
 {/block}
-{block name="right"}
-最新资讯：
 
+{block name="footer"}
 {/block}
 {block name="script"}
 {__block__}
 <script>
-
-    $(document).on("click","#aaa",function(){
-        //alert(222);
-        geta();
-    });
     wx.ready(function () {
-
-    });
-    function geta(){
         wx.checkJsApi({
             jsApiList: [
                 'getLocation'
             ],
             success: function (res) {
-                // alert(JSON.stringify(res));
-                // alert(JSON.stringify(res.checkResult.getLocation));
                 if (res.checkResult.getLocation == false) {
                     alert('你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！');
                     return;
                 }
             }
         });
+
         wx.getLocation({
             type: 'wgs84',
             success: function (res) {
                 var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
                 var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-                var speed = res.speed; // 速度，以米/每秒计
-                var accuracy = res.accuracy; // 位置精度
-                alert([latitude,longitude]);
-                $.ajax({
-                    type:"POST",
-                    url:"{:url('bind/Index/get_location')}",
-                    data:{lat:latitude,lng:longitude},
-                    dataType:"json",
-                    success:function(data){
-                        alert(data);
-                    }
-                })
+                provinceAbb(latitude,longitude);
             }
         });
+
+    });
+    /**
+     * 获取省份简称
+     */
+    function provinceAbb(latitude,longitude)
+    {
+        $.ajax({
+            url:"{:url('bind/Index/get_location')}",
+            type:"POST",
+            data:{lat:latitude,lng:longitude},
+            dataType:"json",
+            success:function(data){
+                //alert(data.data);
+                var code = provinceCode(data.data);
+                $("#provinceAbb").val(code);
+            }
+        })
     }
 
-
-
+    /**
+     * 通过省份转身份编码
+     * @param province
+     * @returns {number}
+     */
+    function provinceCode(province){
+        if(province == "北京市")
+            return 110;
+        else if(province == "天津市")
+            return 120;
+        else if(province == "河北省")
+            return 130;
+        else if(province == "山西省")
+            return 140;
+        else if(province == "内蒙古")
+            return 150;
+        else if(province == "辽宁省")
+            return 210;
+        else if(province == "吉林省")
+            return 220;
+        else if(province == "黑龙江省")
+            return 230;
+        else if(province == "上海市")
+            return 310;
+        else if(province == "江苏省")
+            return 320;
+        else if(province == "浙江省")
+            return 330;
+        else if(province == "安徽省")
+            return 340;
+        else if(province == "福建省")
+            return 350;
+        else if(province == "江西省")
+            return 360;
+        else if(province == "山东省")
+            return 370;
+        else if(province == "河南省")
+            return 410;
+        else if(province == "湖北省")
+            return 420;
+        else if(province == "湖南省")
+            return 430;
+        else if(province == "广东省")
+            return 440;
+        else if(province == "广西壮族")
+            return 450;
+        else if(province == "海南省")
+            return 460;
+        else if(province == "重庆市")
+            return 500;
+        else if(province == "四川省")
+            return 510;
+        else if(province == "贵州省")
+            return 520;
+        else if(province == "云南省")
+            return 530;
+        else if(province == "西藏自治区")
+            return 540;
+        else if(province == "陕西省")
+            return 610;
+        else if(province == "甘肃省")
+            return 620;
+        else if(province == "青海省")
+            return 630;
+        else if(province == "宁夏回族自治区")
+            return 640;
+        else if(province == "新疆维吾尔自治区 ")
+            return 650;
+        else if(province == "台湾省")
+            return 710;
+        else if(province == "香港特别行政区")
+            return 810;
+        else if(province == "澳门特别行政区")
+            return 820;
+        else
+            return 110;
+    }
 </script>
-{/block}
-{block name="footer"}
-
 {/block}

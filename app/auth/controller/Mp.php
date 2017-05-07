@@ -25,7 +25,7 @@ class Mp extends Controller
         $this->wechat = EasyWechat::mp();
         $this->oauth = $this->wechat->oauth;
         $this->user = session('user');
-        $this->user['id'] =7;
+        $this->user['id'] =10;
         //self::auth();
     }
 
