@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 发生送语言电话
+ * 语言电话通知
  * Created by PhpStorm.
  * User: coolong
  * Date: 2017/4/8
@@ -9,7 +9,7 @@
  */
 namespace app\notice\controller;
 use app\common\controller\Common;
-class VoiceSms extends Common
+class VoiceNotice extends Common
 {
     public function index()
     {

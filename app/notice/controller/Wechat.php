@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * 微信通知
  * Created by PhpStorm.
  * User: coolong
  * Date: 2017/4/8

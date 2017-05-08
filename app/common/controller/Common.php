@@ -16,11 +16,11 @@ class Common extends Mp
     public function __construct()
     {
         parent::__construct();
-        $this->indexDate();
+        $this->_indexDate();
         $this->_3d_key = 'd554d3f16c6f4d4ac0f79c4ae43492b2';
     }
 
-    protected function indexDate()
+    protected function _indexDate()
     {
         $this->assign([
             'title' => '车巢网',
