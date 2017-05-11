@@ -8,14 +8,17 @@ class Index extends Common
     {
         $sms = new Sms();
         $msg = [
-            'type'=>'text',
+            'type'=>'voice_notice',
             'templateId' => '42777',
             'param'=>[
                 'code'=>'020251',
-            ]
+            ],
+            'called'=>'15931086078',
+            'uid'=>1,
+            'source'=>1
         ];
-        $result = $sms->send(1883010200,$msg);
-        dump($sms->getError());die;
+        $result = $sms->send(18830102006,$msg);
+        dump($result);die;
         return $this->fetch();
     }
 

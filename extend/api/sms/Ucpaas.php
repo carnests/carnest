@@ -18,6 +18,10 @@ class Ucpaas
      */
     const BaseUrl = "https://api.ucpaas.com/";
     /**
+     * 语音通知API地址
+     */
+    const VoiceUrl = "https://message.ucpaas.com/";
+    /**
      * @var string
      * 开发者账号ID。由32个英文字母和阿拉伯数字组成的开发者账号唯一标识符。
      */
@@ -461,6 +465,41 @@ class Ucpaas
                             <appId>'.$appId.'</appId>
                         </templateSMS>';
             $body = trim($body_xml);
+        }else {
+            throw new Exception("只能json或xml，默认为json");
+        }
+        $data = $this->getResult($url, $body, $type,'post');
+        return $data;
+    }
+
+    /**
+     * @param $appId
+     * @param $to
+     * @param $toSerNum
+     * @param $modelType
+     * @param $templateId
+     * @param $content
+     * @param string $type
+     * @return mixed|string
+     * @throws Exception
+     */
+    public function voiceNotice($appId,$to,$toSerNum,$modelType,$templateId,$content,$type='json')
+    {
+        $url = self::VoiceUrl . self::SoftVersion . '/Accounts/' . $this->accountSid . '/Calls/voiceNotify?sig=' . $this->getSigParameter();
+        if($type == 'json'){
+            $body_json = array('voiceNotify'=>array(
+                'appId'=>$appId,
+                'to'=>$to,
+                'toSerNum'=>$toSerNum,
+                'type'=>$modelType,
+                'playTimes'=>1,
+                'templateId'=>$templateId,
+                'content'=>json_encode($content),
+                'billUrl'=>''
+            ));
+            $body = json_encode($body_json);
+        }elseif($type == 'xml'){
+
         }else {
             throw new Exception("只能json或xml，默认为json");
         }

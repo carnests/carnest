@@ -18,7 +18,7 @@ class SmsUcpaas
     protected $type;    //短信类型 1验证短信 2通知短信  3语言验证码  4语言通知  5双向呼叫
     public function __construct()
     {
-        $this->appId = "558ce46f8d49471e9ef4311ec38abbc4";
+        $this->appId = "0cd41510c4ac47aca75f6c826e6f6fb0";
 
         $options['accountsid']='af5c83e5aafb7463aff7e65afd3e06e2';
         $options['token']='601612ffc9b82d530b6e3407152e2645';
@@ -39,7 +39,7 @@ class SmsUcpaas
                 $this->phone = $phone;
                 $this->msg = $msg;
                 $result = $this->getSmsType();
-                $this->log($result?1:0);
+                //$this->log($result?1:0);
                 return $result;
             }else{
                 $this->error = ['errCode'=>400001,'errMsg'=>'电话格式错误'];
@@ -92,30 +92,68 @@ class SmsUcpaas
     protected function sendVoiceVerify()
     {
         $this->type = 3;
-        return 3;
+        return $this->sms->voiceCode($this->appId,$this->msg['param']['code'],$this->phone);
     }
 
+    /**
+     * 语音通知
+     * @return int
+     */
     protected function sendVoiceNotice()
     {
         $this->type = 4;
-        return 4;
+        return $this->sms->voiceNotice($this->appId,$this->phone,'18835241102',2,$this->msg['templateId'],$this->msg['param']);
     }
 
+    /**
+     * 双向回拨
+     * @return int|mixed|string
+     * @throws \api\sms\Exception
+     */
     protected function sendVoiceCall()
     {
         $this->type = 5;
-        return 5;
+        $friendlyName = $this->getClient();
+        if(!$friendlyName){     //获取失败就调用语言通知接口
+            return $this->sendVoiceNotice();
+        }
+        return $this->sms->callBack($this->appId,$friendlyName,$this->msg['called']);
     }
 
+    /**
+     * 记录日志
+     * @param $status
+     */
     private function log($status)
     {
         $log['type'] = $this->type;
         $log['phone'] = $this->phone;
-        $log['caller'] = $this->msg['caller']?:0;     //主叫号码（只用于双方呼叫）
+        $log['called'] = $this->msg['called']?:0;     //主叫号码（只用于双方呼叫）
         $log['ip'] =  request()->ip();
         $log['uid'] = $this->msg['uid']?:0;
         $log['source'] = $this->msg['source'];
         $log['status'] = $status;
         model('notice/SmsLog')->save($log);
+    }
+
+    /**
+     * 获取client
+     * @return bool
+     * @throws \api\sms\Exception
+     */
+    public function getClient()
+    {
+        $client = $this->sms->getClientInfoByMobile($this->appId,$this->phone);//获取Client信息
+        $json = json_decode($client,true)['resp'];
+        if($json['respCode'] == '000000'){
+            return $json['client']['friendlyName'];
+        }elseif($json['respCode'] == '100007'){         //查无数据
+            $newClient = $this->sms->applyClient($this->appId,'0','0','',$this->phone);          //注册client
+            $json = json_decode($newClient,true)['resp'];
+            if($json['respCode'] == '000000'){
+                return $json['client']['clientNumber'];
+            }
+        }
+        return false;
     }
 }
