@@ -8,7 +8,7 @@
  */
 namespace app\common\tool\sms;
 use api\sms\Ucpaas;
-class SmsUcpaas
+class ApiUcpaas
 {
     protected $sms;
     protected $phone;
@@ -18,8 +18,8 @@ class SmsUcpaas
     protected $type;    //短信类型 1验证短信 2通知短信  3语言验证码  4语言通知  5双向呼叫
     public function __construct()
     {
-        $this->appId = "0cd41510c4ac47aca75f6c826e6f6fb0";
-
+//        $this->appId = "0cd41510c4ac47aca75f6c826e6f6fb0";
+        $this->appId = "7c4e059a7cbe4a5ebec447ba497e79c7";      //挪车
         $options['accountsid']='af5c83e5aafb7463aff7e65afd3e06e2';
         $options['token']='601612ffc9b82d530b6e3407152e2645';
         $this->sms = new Ucpaas($options);
@@ -114,10 +114,11 @@ class SmsUcpaas
     {
         $this->type = 5;
         $friendlyName = $this->getClient();
+        //dump($friendlyName);die;
         if(!$friendlyName){     //获取失败就调用语言通知接口
             return $this->sendVoiceNotice();
         }
-        return $this->sms->callBack($this->appId,$friendlyName,$this->msg['called']);
+        return $this->sms->callBack($this->appId,$friendlyName,$this->msg['called'],'057156056290','057156056290');
     }
 
     /**

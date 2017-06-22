@@ -6,18 +6,21 @@ class Index extends Common
 {
     public function index()
     {
-        $sms = new Sms();
+        return false;
+        $sms = new Sms('juhe');
         $msg = [
-            'type'=>'voice_notice',
+            'type'=>'voice_call',
             'templateId' => '42777',
             'param'=>[
                 'code'=>'020251',
             ],
-            'called'=>'15931086078',
+            'called'=>'18830102006',
             'uid'=>1,
-            'source'=>1
+            'source'=>1,
+            'unid'=>rand(1,100)
         ];
-        $result = $sms->send(18830102006,$msg);
+        $result = $sms->send(18830102005,$msg);
+
         dump($result);die;
         return $this->fetch();
     }

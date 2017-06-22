@@ -14,7 +14,7 @@ class Sms
     protected $error;
     public function __construct($platform='')
     {
-        $this->platform = $platform?:'SmsUcpaas';
+        $this->platform = $platform?:'juhe';
     }
 
     public function getError()
@@ -43,10 +43,12 @@ class Sms
     public function getClass()
     {
         switch ($this->platform){
-            case 'SmsUcpaas': return new SmsUcpaas();
-            break;
-            default:return new SmsUcpaas();
-            break;
+            case 'ucpaas': return new ApiUcpaas();
+                break;
+            case 'juhe': return new ApiJuHe();
+                break;
+            default:return new ApiJuHe();
+                break;
         }
     }
 }
