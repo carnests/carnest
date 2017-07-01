@@ -17,5 +17,5 @@ return [
         ':id'   => ['index/hello', ['method' => 'get'], ['id' => '\d+']],
         ':name' => ['index/hello', ['method' => 'post']],
     ],
-
+    'xcx/login/:code' =>['auth/xcx/login',['method'=>'get']],
 ];
