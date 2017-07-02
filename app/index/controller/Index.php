@@ -6,7 +6,7 @@ class Index extends Common
 {
     public function index()
     {
-        return false;
+        //return false;
         $sms = new Sms('juhe');
         $msg = [
             'type'=>'voice_call',

@@ -20,13 +20,13 @@ class Xcx extends Controller
 
     public function login()
     {
-        $code = input('get.code');
+        $code = input('post.code');
         $xcx = new XcxWechat();
         $result = $xcx->getUserInfo($code);
         if($result){
-            
+            return $result;
         }else{
-            dump($xcx->getError());
+           return $xcx->getError();
         }
     }
 }
