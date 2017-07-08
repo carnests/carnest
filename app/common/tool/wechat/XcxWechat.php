@@ -31,6 +31,7 @@ class XcxWechat
 
     public function getSessionKey($code)
     {
+        dump(self::CODE_TO_SESSION_URL.'?appid='.$this->appid.'&secret='.$this->secret.'&js_code='.$code.'&grant_type=authorization_code');die;
         $result = http_get(self::CODE_TO_SESSION_URL.'?appid='.$this->appid.'&secret='.$this->secret.'&js_code='.$code.'&grant_type=authorization_code');
         if($result){
             $json = json_decode($result,true);

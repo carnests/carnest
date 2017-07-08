@@ -19,10 +19,10 @@ class SmsNotice extends Common
 
     public function index()
     {
-        $sms = new Sms();
+        $sms = new Sms('ucpaas');
         $msg = [
             'uid'=>$this->user['id'],
-            'type'=>'text',
+            'type'=>'text_verify',
             'templateId' => '42777',
             'source'=>1,
             'param'=>[
@@ -30,5 +30,10 @@ class SmsNotice extends Common
             ],
         ];
         $result = $sms->send(18830102005,$msg);
+        if($result){
+            return ['errCode'=>0,'errMsg'=>'成功'];
+        }else{
+            return $sms->getError();
+        }
     }
 }

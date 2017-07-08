@@ -12,4 +12,6 @@ return [
     ],
 
     'auth/wechat/[:echostr]/:signature/:timestamp/:nonce'       => ['auth/Wechat/index',['method'=>'get']],
+//    'xcx/openid/:code' =>['auth/xcx/openid',['method'=>'get']],
+//    'xcx/login/:code' =>['auth/xcx/login',['method'=>'post']],
 ];

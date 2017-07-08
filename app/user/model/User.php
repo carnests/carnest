@@ -42,6 +42,11 @@ class User extends Model
         return $this->where(['openid'=>$openid])->field('id,openid',$field)->find();
     }
 
+    /**
+     * 更新最后登陆时间
+     * @param $id
+     * @return $this
+     */
     public function update_lastlogin($id)
     {
         return $this->where(['id'=>$id])->update(['lastlogin'=>date('Y-m-d H:i:s')]);

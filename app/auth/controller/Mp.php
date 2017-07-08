@@ -48,10 +48,7 @@ class Mp extends Controller
     public function callback()
     {
         $user = $this->oauth->user();
-        $this->add_user($user->getOriginal());
-//        if(session('last_url')){
-//            $this->redirect(session('last_url'));
-//        }
+        action('User/add_user',[$user->getOriginal()]);     //添加用户信息
         $this->redirect($this->index_url);
     }
 

@@ -9,6 +9,8 @@
 namespace app\bind\controller;
 use app\common\controller\Common;
 use app\common\tool\location\BaiduMap;
+use think\Config;
+
 class Index extends Common
 {
     protected $db;
@@ -24,6 +26,7 @@ class Index extends Common
      */
     public function index()
     {
+        dump(cache('bind_data'));die;
         $id = input('id');
         return $this->fetch('index',['id'=>$id]);
     }
@@ -56,8 +59,6 @@ class Index extends Common
             return ['errCode'=>0,'errMsg'=>'绑定成功'];
         }else{
             $error = $this->db->getError();
-            dump($error);exit;
-            //dump(['errCode'=>1,'errMsg'=>$error?:'操作异常']);exit;
             return ['errCode'=>1,'errMsg'=>$error?:'操作异常'];
         }
     }
@@ -72,7 +73,12 @@ class Index extends Common
         $map = new BaiduMap();
         $result = $map->province($lat.",".$lng,3);
         if($result){
-            return ['data'=>$result];
+            $province = Config::get('location.PROVINCE');
+            return [
+                'location'=>(int)$province[$result]['id'],  //获取的地理位置id
+                'data'=>array_values($province),            //所有省份信息
+                'name'=>array_column($province,'name')      //所有省份名称
+            ];
         }else{
             return $map->getError();
         }
