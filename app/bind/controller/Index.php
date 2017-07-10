@@ -49,18 +49,32 @@ class Index extends Common
     {
         $info = input('info/a');
         $id = input('id');
-        if(!$id){       //二维码id
-            $info['id'] = $this->make_card($this->user['id']);
-        }else{
-            $info['id'] = $id;
+        //验证手机验证码
+        $m_verify_code = model('notice/VerifyCode');
+        $m_verify_code->startTrans();
+        try{
+            if(!$m_verify_code->check_code($info['phone'],$info['code'])){
+                return $m_verify_code->getError();
+            }
+            if(!$id){       //二维码id
+                $info['id'] = $this->make_card($this->user['id']);
+            }else{
+                $info['id'] = $id;
+            }
+            unset($info['code']);
+            $result = $this->db->bind($info);
+            if($result){
+                $m_verify_code->commit();
+                return ['errCode'=>0,'errMsg'=>'绑定成功'];
+            }else{
+                $error = $this->db->getError();
+                return ['errCode'=>1,'errMsg'=>$error?:'操作异常'];
+            }
+        }catch (Exception $e) {
+            $m_verify_code->rollback();
         }
-        $result = $this->db->bind($info);
-        if($result){
-            return ['errCode'=>0,'errMsg'=>'绑定成功'];
-        }else{
-            $error = $this->db->getError();
-            return ['errCode'=>1,'errMsg'=>$error?:'操作异常'];
-        }
+
+
     }
 
     /**

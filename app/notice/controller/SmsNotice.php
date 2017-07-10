@@ -17,8 +17,13 @@ class SmsNotice extends Common
         parent::__construct();
     }
 
-    public function index()
+    public function index($phone)
     {
+        $m_verify_code = model('notice/VerifyCode');
+        $code = $m_verify_code->make_code($phone,1);
+        if(!$code){
+            return $m_verify_code->getError();
+        }
         $sms = new Sms('ucpaas');
         $msg = [
             'uid'=>$this->user['id'],
@@ -26,10 +31,10 @@ class SmsNotice extends Common
             'templateId' => '42777',
             'source'=>1,
             'param'=>[
-                'code'=>'020251',
+                'code'=>$code,
             ],
         ];
-        $result = $sms->send(18830102005,$msg);
+        $result = $sms->send($phone,$msg);
         if($result){
             return ['errCode'=>0,'errMsg'=>'成功'];
         }else{

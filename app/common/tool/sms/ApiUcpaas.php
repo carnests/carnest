@@ -35,16 +35,16 @@ class ApiUcpaas
         if(is_array($phone)){
 
         }else{
+            $this->phone = $phone;
+            $this->msg = $msg;
             if(isPhone($phone)){
-                $this->phone = $phone;
-                $this->msg = $msg;
                 $result = $this->getSmsType();
-                //$this->log($result?1:0);
-                return $result;
             }else{
                 $this->error = ['errCode'=>400001,'errMsg'=>'电话格式错误'];
-                return false;
+                $result = false;
             }
+            $this->log($result?1:0);
+            return $result;
         }
     }
 
@@ -114,11 +114,18 @@ class ApiUcpaas
     {
         $this->type = 5;
         $friendlyName = $this->getClient();
-        //dump($friendlyName);die;
         if(!$friendlyName){     //获取失败就调用语言通知接口
             return $this->sendVoiceNotice();
         }
-        return $this->sms->callBack($this->appId,$friendlyName,$this->msg['called'],'057156056290','057156056290');
+        $result = $this->sms->callBack($this->appId,$friendlyName,$this->msg['called'],'057156056290','057156056290');
+        if($result){
+            $json = json_decode($result);
+            if(!$json || !empty($result['respCode'])){
+                $this->error = ['errCode'=>$json['respCode'],'errMsg'=>''];
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -127,13 +134,18 @@ class ApiUcpaas
      */
     private function log($status)
     {
-        $log['type'] = $this->type;
-        $log['phone'] = $this->phone;
-        $log['called'] = $this->msg['called']?:0;     //主叫号码（只用于双方呼叫）
+        $log['platform'] = 'ucpaas';
+        $log['type'] = $this->type?:'';
+        $log['phone'] = $this->phone?:'';
+        $log['called'] = isset($this->msg['called'])?$this->msg['called']:0;     //主叫号码（只用于双方呼叫）
         $log['ip'] =  request()->ip();
         $log['uid'] = $this->msg['uid']?:0;
-        $log['source'] = $this->msg['source'];
+        $log['source'] = $this->msg['source']?:0;
         $log['status'] = $status;
+        $log['errmsg'] = serialize($this->error);
+        $log['day'] = date('Y-m-d');
+        $log['week'] = date('Y-W');
+        $log['month'] =date('Y-m');
         model('notice/SmsLog')->save($log);
     }
 

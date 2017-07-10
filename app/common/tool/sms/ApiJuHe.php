@@ -160,8 +160,8 @@ class ApiJuHe
         $log['status'] = $status?1:0;
         $log['errmsg'] = $this->error?serialize($this->error):'';   //错误信息
         $log['day'] = date('Y-m-d');
-        $log['week'] = date('W');
-        $log['month'] =date('m');
+        $log['week'] = date('Y-W');
+        $log['month'] =date('Y-m');
         if($this->unid){
             $this->m_log->where(['id'=>$this->unid])->update($log);
         }else{
