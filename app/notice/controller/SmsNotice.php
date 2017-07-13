@@ -10,6 +10,8 @@
 namespace app\notice\controller;
 use app\common\controller\Common;
 use app\common\tool\sms\Sms;
+use think\Config;
+
 class SmsNotice extends Common
 {
     public function __construct()
@@ -17,10 +19,19 @@ class SmsNotice extends Common
         parent::__construct();
     }
 
-    public function index($phone)
+
+    public function index($phone,$type)
     {
+        $type = $this->getType($type);
+        if(!$type){
+            return ['errCode'=>1,'errMsg'=>'来源异常'];
+        }
+        $m_sms_log = model('notice/SmsLog');
+        if(!$m_sms_log->dailyLimit($phone,1)){          //1 代表短信验证码
+            return $m_sms_log->getError();
+        }
         $m_verify_code = model('notice/VerifyCode');
-        $code = $m_verify_code->make_code($phone,1);
+        $code = $m_verify_code->make_code($phone,$type); //注册短信
         if(!$code){
             return $m_verify_code->getError();
         }
@@ -29,7 +40,7 @@ class SmsNotice extends Common
             'uid'=>$this->user['id'],
             'type'=>'text_verify',
             'templateId' => '42777',
-            'source'=>1,
+            'source'=>$type,
             'param'=>[
                 'code'=>$code,
             ],
@@ -40,5 +51,10 @@ class SmsNotice extends Common
         }else{
             return $sms->getError();
         }
+    }
+
+    public function getType($type)
+    {
+        return Config::get('sms.SEND_TYPE')[$type];
     }
 }

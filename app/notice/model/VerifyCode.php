@@ -25,7 +25,7 @@ class VerifyCode extends Common
     /**
      * 生成手机验证码
      * @param $phone
-     * @param int $type  发送短信类型  1注册
+     * @param int $type  发送短信类型  1001注册
      * @param int $uid
      * @return bool|mixed
      */
@@ -36,9 +36,9 @@ class VerifyCode extends Common
             return false;
         }
 
-        if($code = $this->code_is_exist($phone)){
-            return $code;
-        }
+//        if($code = $this->code_is_exist($phone)){
+//            return $code;
+//        }
         $add['code'] = $code = rand(100000,999999);
         $add['phone'] = $phone;
         $add['type'] = $type;
@@ -84,22 +84,24 @@ class VerifyCode extends Common
             return false;
         }
         $where['phone'] = $phone;
+        $where['code'] = $code;
         $where['state'] = 0;
         $data = $this->where($where)->field('id,code,create_time')->find();
-        if($data){
-            if($code == $data['code']){
-                if(strtotime($data['create_time'])+$this->expires > time()){
-                    $this->where(['id'=>$data['id']])->update(['state'=>1,'check_time'=>date('Y-m-d H:i:s')]);
-                    return true;
-                }else{
-                    $this->error = ['errCode'=>1,'errMsg'=>'验证码已过期，请重新获取'];
-                }
-            }else{
-                $this->error = ['errCode'=>1,'errMsg'=>'验证码错误'];
-            }
-        }else{
-            $this->error = ['errCode'=>1,'errMsg'=>'网络异常'];
+        if(!$data){
+            $this->error = ['errCode'=>1,'errMsg'=>'验证码错误'];
+            return false;
         }
-        return false;
+        if($code != $data['code']){
+            $this->error = ['errCode'=>1,'errMsg'=>'验证码错误'];
+            return false;
+        }
+
+        if(strtotime($data['create_time'])+$this->expires < time()){
+            $this->error = ['errCode'=>1,'errMsg'=>'验证码已过期，请重新获取'];
+            return false;
+        }
+
+        $result = $this->where(['id'=>$data['id']])->update(['state'=>1,'check_time'=>date('Y-m-d H:i:s')]);
+        return $result;
     }
 }

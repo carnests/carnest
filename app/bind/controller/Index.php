@@ -20,35 +20,8 @@ class Index extends Common
         $this->db = model('card/CarCard');
     }
 
-    /**
-     * 绑定页面
-     * @return mixed
-     */
-    public function index()
+    public function bind($info,$id=0)
     {
-        dump(cache('bind_data'));die;
-        $id = input('id');
-        return $this->fetch('index',['id'=>$id]);
-    }
-
-    /**
-     * 生成新的车卡
-     * @param $uid
-     * @return mixed
-     */
-    public function make_card($uid)
-    {
-        $id = $this->db->is_idle($uid);
-        if(!$id){
-            $id = $this->db->initial($uid);
-        }
-        return $id;
-    }
-
-    public function bind()
-    {
-        $info = input('info/a');
-        $id = input('id');
         //验证手机验证码
         $m_verify_code = model('notice/VerifyCode');
         $m_verify_code->startTrans();
@@ -56,17 +29,17 @@ class Index extends Common
             if(!$m_verify_code->check_code($info['phone'],$info['code'])){
                 return $m_verify_code->getError();
             }
-            if(!$id){       //二维码id
-                $info['id'] = $this->make_card($this->user['id']);
-            }else{
+            if($id){       //二维码id
                 $info['id'] = $id;
             }
             unset($info['code']);
-            $result = $this->db->bind($info);
+            $info['uid'] = $this->user['id'];
+            $result = $this->db->bindCard($info);
             if($result){
                 $m_verify_code->commit();
                 return ['errCode'=>0,'errMsg'=>'绑定成功'];
             }else{
+                $m_verify_code->rollback();
                 $error = $this->db->getError();
                 return ['errCode'=>1,'errMsg'=>$error?:'操作异常'];
             }

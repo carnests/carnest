@@ -8,6 +8,7 @@
  */
 namespace app\card\model;
 use app\common\model\Common;
+use think\Config;
 use think\Loader;
 class CarCard extends Common
 {
@@ -16,80 +17,90 @@ class CarCard extends Common
     // 关闭自动写入update_time字段
     protected $updateTime = false;
 
-    protected $db_bing_phone;   //手机绑定表
-    protected $db_user;   //用户表
+    protected $db_user;         //用户表
+    protected $card_num;        //可绑定车辆数
     protected function initialize()
     {
         parent::initialize();
-        $this->db_bing_phone = model('card/BindPhone');
         $this->db_user = model('user/User');
+        $this->card_num = 3;
     }
 
-    public function bind($info)
+    /**
+     * 绑定车牌
+     * @param mixed $info
+     * @return $this|bool|false|int
+     */
+    public function bindCard($info)
     {
-        if($this->is_bing($info['id'])){
-            $this->error = '该卡已经被绑定';
-            return false;
-        }
-        $info['card'] = strtoupper($info['card']);
-        $info['license_plate'] = '冀'.$info['card'];
-        if($this->license_plate($info['license_plate'])){
-            $this->error = '该车牌已经绑定';
-            return false;
-        }
 
-        $Validate = Loader::validate('card/CarCard');
+        $Validate = Loader::validate('card/CarCard');       //验证字段信息
         if(!$Validate->check($info)){
             $this->error = $Validate->getError();
             return false;
         }
-        $info['bind_time'] = date('Y-m-d H:i:s');
 
-        if(!$this->db_bing_phone->add($info['id'],$info['phone'],true)){     //绑定手机
-            $this->error = $this->db_bing_phone->getError();
+        if($this->cardLimit($info['uid'])){
+            $this->error = '已达绑定车辆上线';
             return false;
         }
+
+        if(isset($info['id'])){
+            if($this->isBing($info['id'])){
+                $this->error = '该卡已经被绑定';
+                return false;
+            }
+        }
+
+        $info['card'] = strtoupper($info['card']);
+        $province = array_values(Config::get('location.PROVINCE'))[$info['province_id']]['name'];
+        $info['license_plate'] = $province.'·'.$info['card'];
+        if($this->licensePlate($info['license_plate'])){
+            $this->error = '该车牌已经绑定';
+            return false;
+        }
+        $info['city_id'] = substr($info['card'],0,1);
+        $info['bind_time'] = date('Y-m-d H:i:s');
         $info['status'] = 1;
 
-        unset($info['phone']);
-        $result = $this->where(['id'=>$info['id']])->update($info);
+        if(isset($info['id'])){
+            $result = $this->where(['id'=>$info['id']])->update($info);
+        }else{
+            $result = $this->save($info);
+        }
+
         return $result;
     }
 
     /**
-     * 是否存在没有绑定的卡
-     * @param $uid
+     * 判断是否已经被绑定
+     * @param $id
      * @return mixed
      */
-    public function is_idle($uid)
-    {
-        return $this->where(['uid'=>$uid,'status'=>0])->value('id');
-    }
-
-    /**
-     * 卡片初始化
-     * @param $uid
-     * @return bool|mixed
-     */
-    public function initial($uid)
-    {
-        $result = $this->save(['uid'=>$uid]);
-        return $result?$this->id:false;
-    }
-
-    public function is_bing($id)
+    public function isBing($id)
     {
         return $this->where(['id'=>$id,'status'=>1])->value('uid');
     }
 
     /**
      * 查询车牌是否存在
-     * @param $license_plate    车牌
+     * @param $license_plate    //车牌
      * @return mixed
      */
-    public function license_plate($license_plate)
+    public function licensePlate($license_plate)
     {
         return $this->where(['license_plate'=>$license_plate])->value('id');
+    }
+
+
+    public function cardLimit($uid)
+    {
+        $count = $this->where(['uid'=>$uid])->count();
+        if($count >= $this->card_num){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**
