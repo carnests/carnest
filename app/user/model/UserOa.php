@@ -8,9 +8,9 @@
  */
 namespace app\user\model;
 use think\Model;
-class User extends Model
+class UserOa extends Model
 {
-    protected $table = 'carnest_user';
+    protected $table = 'carnest_user_oa';
     protected $pk = 'id';
     // 关闭自动写入update_time字段
     protected $updateTime = false;
@@ -26,6 +26,7 @@ class User extends Model
      */
     public function add($user=[])
     {
+        $user['base64name'] = base64_encode($user['nickName']);
         $result =$this->allowField(true)->save($user);
         return $result?$this->id:0;
     }
@@ -39,7 +40,7 @@ class User extends Model
     public function is_exist($openid,$field='')
     {
         if($field)$field = ','.$field;
-        return $this->where(['openid'=>$openid])->field('id,openid',$field)->find();
+        return $this->where(['openid'=>$openid])->field('id,openid'.$field)->find();
     }
 
     /**

@@ -43,6 +43,17 @@ class EasyWechat
             ],
 
             /**
+             * 小程序账号信息
+             */
+            'mini_program' => [
+                'app_id'   => 'wxdf008d543a554f1f',
+                'secret'   => '76b1638f558f0bd837af05e8ba62d523',
+                // token 和 aes_key 开启消息推送后可见
+                'token'    => 'your-token',
+                'aes_key'  => 'your-aes-key'
+            ],
+
+            /**
              * 日志配置
              */
             'log' => [

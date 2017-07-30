@@ -181,3 +181,46 @@ function typicED($string, $operation = 'DECODE', $key = '', $expiry = 0) {
         return $keyc.str_replace('=', '', base64_encode($result));
     }
 }
+
+/**
+ * 生产3rd_session
+ * @param int $len
+ * @return bool|string
+ */
+function make_3rd_session($len=168) {
+
+    $fp = @fopen('/dev/urandom','rb');
+
+    $result = '';
+
+    if ($fp !== FALSE) {
+
+        $result .= @fread($fp, $len);
+
+        @fclose($fp);
+
+    } else {
+
+        trigger_error('Can not open /dev/urandom.');
+
+    }
+
+    // convert from binary to string
+
+    $result = base64_encode($result);
+
+    // remove none url chars
+
+    $result = strtr($result, '+/', '-_');
+
+    return substr($result, 0, $len);
+}
+
+/**
+ * 通过3rd_session获取openid
+ * @param $session_3rd
+ * @return bool|string
+ */
+function getOpenId($session_3rd){
+    return substr($session_3rd,0,28);
+}

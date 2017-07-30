@@ -113,6 +113,10 @@ class ApiUcpaas
     protected function sendVoiceCall()
     {
         $this->type = 5;
+        if($this->msg['called'] == $this->phone){
+            $this->error = ['errCode'=>400003,'errMsg'=>'无法通知相同的两个号码'];
+            return false;
+        }
         $friendlyName = $this->getClient();
         if(!$friendlyName){     //获取失败就调用语言通知接口
             return $this->sendVoiceNotice();

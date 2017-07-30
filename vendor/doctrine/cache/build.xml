@@ -39,6 +39,7 @@
     </target>
 
     <target name="make-release" depends="check-git-checkout-clean,prepare,php">
+        <replace file="${project.version_file}" token="-DEV" value="" failOnNoReplacements="true" />
         <exec executable="git" failonerror="true" outputproperty="current_git_branch">
             <arg value="rev-parse" />
             <arg value="--abbrev-ref" />

@@ -40,6 +40,7 @@ use EasyWeChat\Support\Traits\PrefixedContainer;
  * @method \EasyWeChat\Support\Collection getAuthorizerInfo($authorizerAppId)
  * @method \EasyWeChat\Support\Collection getAuthorizerOption($authorizerAppId, $optionName)
  * @method \EasyWeChat\Support\Collection setAuthorizerOption($authorizerAppId, $optionName, $optionValue)
+ * @method \EasyWeChat\Support\Collection getAuthorizerList($offset = 0, $count = 500)
  */
 class OpenPlatform
 {
@@ -55,15 +56,16 @@ class OpenPlatform
      */
     public function createAuthorizerApplication($appId, $refreshToken)
     {
-        $this->fetch('authorization')
-            ->setAuthorizerAppId($appId)
-            ->setAuthorizerRefreshToken($refreshToken);
+        $this->fetch('authorizer', function ($authorizer) use ($appId, $refreshToken) {
+            $authorizer->setAppId($appId);
+            $authorizer->setRefreshToken($refreshToken);
+        });
 
-        $application = $this->fetch('app');
-        $application['access_token'] = $this->fetch('authorizer_access_token');
-        $application['oauth'] = $this->fetch('oauth');
-
-        return $application;
+        return $this->fetch('app', function ($app) {
+            $app['access_token'] = $this->fetch('authorizer_access_token');
+            $app['oauth'] = $this->fetch('oauth');
+            $app['server'] = $this->fetch('server');
+        });
     }
 
     /**

@@ -12,7 +12,7 @@ class Sms
 {
     protected $platform;        //短信平台
     protected $error;
-    public function __construct($platform='')
+    public function __construct($platform='juhe')
     {
         $this->platform = $platform?:'juhe';
     }

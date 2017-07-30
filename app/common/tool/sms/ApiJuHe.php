@@ -123,6 +123,11 @@ class ApiJuHe
     protected function sendVoiceCall()
     {
         $this->type = 5;
+        if($this->msg['called'] == $this->phone){
+            $this->error = ['errCode'=>400003,'errMsg'=>'无法通知相同的两个号码'];
+            return false;
+        }
+
         if(empty($this->msg['called']) || !isPhone($this->msg['called'])){
             $this->error = ['errCode'=>400002,'errMsg'=>'被叫电话格式错误或不存在'];
             return false;

@@ -30,6 +30,7 @@ class ComposerStaticInit9cbb41844886b5c64081813d25075238
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Container\\' => 14,
         ),
         'O' => 
         array (
@@ -83,6 +84,10 @@ class ComposerStaticInit9cbb41844886b5c64081813d25075238
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
         ),
         'Overtrue\\Socialite\\' => 
         array (

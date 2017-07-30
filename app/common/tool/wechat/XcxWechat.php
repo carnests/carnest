@@ -12,7 +12,7 @@ namespace app\common\tool\wechat;
 class XcxWechat
 {
     const APPID = 'wxdf008d543a554f1f';
-    const SECRET = '9e7cb05255daf8e1bab3056f74c77419';  //2017-7-1
+    const SECRET = '76b1638f558f0bd837af05e8ba62d523';  //2017-7-1
     const CODE_TO_SESSION_URL = 'https://api.weixin.qq.com/sns/jscode2session';
 
 

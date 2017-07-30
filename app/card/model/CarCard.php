@@ -22,7 +22,7 @@ class CarCard extends Common
     protected function initialize()
     {
         parent::initialize();
-        $this->db_user = model('user/User');
+        $this->db_user = model('user/UserXcx');
         $this->card_num = 3;
     }
 
@@ -40,7 +40,7 @@ class CarCard extends Common
             return false;
         }
 
-        if($this->cardLimit($info['uid'])){
+        if(!$this->cardLimit($info['uid'])){
             $this->error = '已达绑定车辆上线';
             return false;
         }
@@ -95,7 +95,7 @@ class CarCard extends Common
 
     public function cardLimit($uid)
     {
-        $count = $this->where(['uid'=>$uid])->count();
+        $count = $this->where(['uid'=>$uid,'status'=>1])->count();
         if($count >= $this->card_num){
             return false;
         }else{
@@ -111,8 +111,12 @@ class CarCard extends Common
     public function getCarInfo($id)
     {
         $data = $this->where(['id'=>$id])->field('uid,license_plate')->find();
-        $data['openid'] = $this->db_user->where(['id'=>$data['uid']])->value('openid');
+        $data['openId'] = $this->db_user->where(['id'=>$data['uid']])->value('openId');
         return $data;
-        //return $this->alias('c')->where(['c.id'=>$id])->join('__USER__ u ON c.uid=u.id')->field('openid,license_plate')->();
+    }
+
+    public function getCarPhone($id)
+    {
+        return $this->where(['id'=>$id])->value('phone');
     }
 }

@@ -18,10 +18,10 @@ class Call extends Common
      * @param $id       //车主车牌id（用于查找被叫电话）
      * @return bool
      */
-    public function move_car($phone,$id)
+    public function index($phone,$id)
     {
-        $m_bind_phone = model('card/BindPhone');
-        $call = $m_bind_phone->getPhone($id,true);       //获取被叫电话
+        $m_car_card = model('card/CarCard');
+        $call = $m_car_card->getCarPhone($id);       //获取被叫电话
 
         $m_blacklist = model('notice/SmsBlacklist');
         $confine = $m_blacklist->is_confine($phone.$call);      //验证黑名单
@@ -30,7 +30,7 @@ class Call extends Common
             return ['errCode'=>1,'errMsg'=>'请求异常请稍后再试'];
         }
 
-        $sms = new Sms();
+        $sms = new Sms('ucpaas');
         $msg = [
             'type'=>'voice_call',       //通知类型
             'templateId' => '42777',    //模板id(短信接口使用)
@@ -41,9 +41,13 @@ class Call extends Common
             'uid'=>$this->user['id'],   //用户id
             'source'=>5100,             //资源消耗渠道
         ];
+
         $result = $sms->send($phone,$msg);
-        dump($sms->getError());die;
-        return $result;
+        if($result){
+            return ['errCode'=>0,'errMsg'=>'成功'];
+        }else{
+            return $sms->getError();
+        }
     }
 
 }
