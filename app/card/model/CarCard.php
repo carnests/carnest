@@ -110,7 +110,7 @@ class CarCard extends Common
      */
     public function getCarInfo($id)
     {
-        $data = $this->where(['id'=>$id])->field('uid,license_plate')->find();
+        $data = $this->where(['id'=>$id])->find();
         $data['openId'] = $this->db_user->where(['id'=>$data['uid']])->value('openId');
         return $data;
     }

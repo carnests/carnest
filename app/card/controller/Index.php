@@ -28,8 +28,20 @@ class Index extends Common
     }
 
     /**
+     * 车辆信息详情
+     * @param $session_3rd
+     * @param $card_id
+     * @return array
+     */
+    public function card_show($session_3rd,$card_id)
+    {
+        $data = $this->db->where(['id'=>$card_id])->find();
+        return ['errCode'=>0,'data'=>$data];
+    }
+
+    /**
      * 通过扫描信息获取二维码状态
-     * @param $scene
+     * @param $scene    //二维码信息
      * @return array
      */
     public function get_code_state($session_3rd,$scene)
@@ -56,4 +68,5 @@ class Index extends Common
         }
         return ['errCode'=>0,'data'=>$type,'phone'=>isset($phone)?$phone:''];
     }
+
 }
